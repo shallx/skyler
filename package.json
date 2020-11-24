@@ -1,7 +1,7 @@
 {
   "name": "skyler",
   "version": "1.0.0",
-  "description": "",
+  "description": "My Personal Cli",
   "main": "index.js",
   "preferGlobal": true,
   "bin": "./commands.js",
