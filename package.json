@@ -14,7 +14,11 @@
   "dependencies": {
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
+    "execa": "^4.1.0",
     "inquirer": "^7.3.3",
-    "node-powershell": "^4.0.0"
+    "listr": "^0.14.3",
+    "ncp": "^2.0.0",
+    "node-powershell": "^4.0.0",
+    "pkg-install": "^1.0.0"
   }
 }

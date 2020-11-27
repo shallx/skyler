@@ -1,5 +1,5 @@
 const startMenu_appdata =
-  'C:\\Users\\"Rafat Rashid"\\AppData\\Roaming\\Microsoft\\Windows\\"Start Menu"\\Programs\\';
+  'C:\\Users\\\"Rafat Rashid\"\\AppData\\Roaming\\Microsoft\\Windows\\\"Start Menu\"\\Programs\\';
 const startmenu_programdata =
   'C:\\ProgramData\\Microsoft\\Windows\\"Start Menu"\\Programs\\';
 const progs = {
