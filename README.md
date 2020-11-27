@@ -26,3 +26,6 @@
   - Inquirer (for user prompt)
   - Node-powershell (for powershell commands)
   - chalk (for color)
+  - pkg-install (for npm package install)
+  - listr (for Listing successful Transfer)
+  - execa (for executing shell commands)
