@@ -29,3 +29,5 @@
   - pkg-install (for npm package install)
   - listr (for Listing successful Transfer)
   - execa (for executing shell commands)
+  - fs-extra (for Generate Sub files)
+  - handlebar (for formating template )

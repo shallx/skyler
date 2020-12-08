@@ -5,7 +5,8 @@ const chalk = require("chalk");
 const progs = require("./progs");
 const ncp = require("ncp");
 const { promisify } = require("util");
-const path = require("./path");
+const my_path = require("./path");
+const path = require("path");
 const fs = require("fs");
 const fse = require("fs-extra");
 const handlebars = require("handlebars");
@@ -25,7 +26,8 @@ program.version("1.0.0").description("My personal CLI Assistant");
 
 program
   .command("create <lang> <subs>")
-  .option("--git", "-g", "Initializing Git Repo")
+  .option("-g, --git", "Initializing Git Repo")
+  .option("-i, --install", "Install Repository")
   .description("Create Template")
   .action(async (lang, subs, cmdObj) => {
     const tasks = new Listr([]);
@@ -38,6 +40,12 @@ program
         title: "Git Init",
         task: () => gitInit(),
       });
+    if (cmdObj.install) {
+      tasks.add({
+        title: "Install Dependencies",
+        task: () => projInstall(),
+      });
+    }
     await tasks.run().catch(err => {
       console.error(err);
     });
@@ -47,7 +55,9 @@ program
 
 program
   .command("fetch <lang>")
-  .option("--model <name>", "-m", "fetching model")
+  .option("-m, --model <name>", "Fetching model")
+  .option("-c, --controller <name>", "Fetch Controller")
+  .option("-mrc, --mrc_all <name>", "Fetch Model Route Controller")
   .description("Fetch template files")
   .action((lang, cmdObj) => {
     fetch_files(lang, cmdObj);
@@ -77,11 +87,11 @@ program
 program.parse(process.argv);
 
 // const copyFiles = async () => {
-//   return copy(path.src("//node"), path.des, { clobber: false });
+//   return copy(my_path.src("//node"), my_path.des, { clobber: false });
 // };
 async function copyFiles() {
   const copy = promisify(ncp);
-  return copy(path.src("//node"), path.des, { clobber: false });
+  return copy(my_path.src("//node"), my_path.des, { clobber: false });
 }
 
 async function gitInit() {
@@ -94,25 +104,54 @@ async function gitInit() {
 
 function capitalize(s) {
   if (typeof s !== "string") return "";
+  s.toLowerCase();
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 function fetch_files(lang, cmdObj) {
   const n_lang = lang.toLowerCase();
-  const schema_name = cmdObj.model.toLowerCase();
-  const model_name = capitalize(schema_name);
 
-  if (n_lang == "node") {
-    const temp = fs.readFileSync(path.src("//node//Model/model.txt"));
-    const template = handlebars.compile(temp.toString());
-    const data = template({ model_name, schema_name });
-    fse
-      .outputFile("Model/" + cmdObj.model + ".js", data)
-      .then(() => {
-        process.exit();
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  let _src, _des, data;
+  switch (n_lang) {
+    case "node":
+      if (cmdObj.model) {
+        data = {
+          schema_name: cmdObj.model.toLowerCase(),
+          model_name: capitalize(cmdObj.model),
+        };
+        _src = "//node//Model//model.txt";
+        _des = "Model/" + data.schema_name + ".js";
+      } else if (cmdObj.controller) {
+        data = {
+          controller_name: capitalize(cmdObj.controller),
+          controller_obj: cmdObj.controller.toLowerCase(),
+        };
+        _src = "/node/Controller/controller.txt";
+        _des = "Controller/" + data.controller_obj + "Controller" + ".js";
+      }
+      break;
+    case "gitignore":
+      data = {};
+      _src = ".gitignore";
+      _des = ".gitignore";
   }
+  const temp = fs.readFileSync(my_path.src(_src));
+  const template = handlebars.compile(temp.toString());
+  const templated_data = template(data);
+  fse
+    .outputFile(_des, templated_data)
+    .then(() => {
+      process.exit();
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
+async function projInstall() {
+  const result = await execa("npm", ["install"]);
+  if (result.failed) {
+    return Promise.reject(new Error("Failed to install package"));
+  }
+  return;
 }
