@@ -28,6 +28,7 @@ program
   .command("create <lang> <subs>")
   .option("-g, --git", "Initializing Git Repo")
   .option("-i, --install", "Install Repository")
+  .option("-r, --open", "Open Project")
   .description("Create Template")
   .action(async (lang, subs, cmdObj) => {
     const tasks = new Listr([]);
@@ -43,7 +44,13 @@ program
     if (cmdObj.install) {
       tasks.add({
         title: "Install Dependencies",
-        task: () => projInstall(),
+        task: () => projectInstall(),
+      });
+    }
+    if (cmdObj.open) {
+      tasks.add({
+        title: "Open Project in VSCode",
+        task: () => openProject(),
       });
     }
     await tasks.run().catch(err => {
@@ -134,6 +141,9 @@ function fetch_files(lang, cmdObj) {
       data = {};
       _src = ".gitignore";
       _des = ".gitignore";
+      break;
+    default:
+      console.log("$n_lang does not matches with any template");
   }
   const temp = fs.readFileSync(my_path.src(_src));
   const template = handlebars.compile(temp.toString());
@@ -152,6 +162,16 @@ async function projInstall() {
   const result = await execa("npm", ["install"]);
   if (result.failed) {
     return Promise.reject(new Error("Failed to install package"));
+  }
+  return;
+}
+
+async function openProject() {
+  const result = await execa("code", ["."]);
+  if (result.failed) {
+    return Promise.reject(
+      new Error("code cli not found in environmental variable")
+    );
   }
   return;
 }
