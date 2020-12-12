@@ -1,0 +1,11 @@
+const express = require("express");
+const Router = express.Router();
+const {{route_obj}}Controller = require("../controller/{{route_obj}}Controller");
+
+Router.post("/", {{route_obj}}Controller.store);
+Router.get("/", {{route_obj}}Controller.index);
+Router.get("/:_id", {{route_obj}}Controller.show);
+Router.put("/:_id", {{route_obj}}Controller.update);
+Router.delete("/:_id", {{route_obj}}Controller.destroy);
+
+module.exports = Router;

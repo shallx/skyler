@@ -1,0 +1,9 @@
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
+const validator = require("validator");
+
+const {{schema_name}}Schema = new Schema({
+  
+});
+
+module.exports = mongoose.model("{{model_name}}", {{schema_name}}Schema);

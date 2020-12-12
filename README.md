@@ -3,7 +3,6 @@
 ## Function
 
 - Open Few Applications
-
   - Anydesk
   - Vscode
   - MongoDBCompass
@@ -13,10 +12,22 @@
   - Epic
   - Search Everything
 
-- Generate Template
+- Bootstrap Template
   - NodeJs
   - VueJs
   - Laravel
+
+- Generate/Fetch Template
+  - NodeJs
+    - Model
+    - Controller
+    - Router
+
+- Trello Task
+  - Add Card
+  - Remove Card
+  - List Cards
+
 
 ## Technology Used
 
