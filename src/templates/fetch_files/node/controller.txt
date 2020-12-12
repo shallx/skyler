@@ -1,0 +1,52 @@
+const {{controller_name}} = require("../Model/{{controller_name}}");
+const errorHandler = require("./errors");
+
+exports.index = (req, res, next) => {
+  {{controller_name}}.find()
+    .limit(5)
+    .then({{controller_obj}}s => {
+      return res.status(200).json({{controller_obj}}s);
+    })
+    .catch(err => errorHandler.throwErrorc(err, next));
+};
+
+exports.store = (req, res, next) => {
+  // Empty body check
+  if(Object.keys(req.body).length === 0 && req.body.constructor === Object) throw Error("Input Fields can't be empty");
+
+  const {{controller_obj}} = new {{controller_name}}(req.body);
+  {{controller_obj}}
+    .save()
+    .then((result) => {
+      return res.status(201).json(result);
+    })
+    .catch(err => errorHandler.throwErrorc(err, next));
+};
+
+exports.show = (req, res, next) => {
+  const _id = req.params._id;
+  {{controller_name}}.findById(_id)
+  .then(({{controller_obj}}) => {
+    return res.json({{controller_obj}});
+  }).catch(err => errorHandler.throwErrorc(err, next));
+};
+
+exports.update = (req, res, next) => {
+  const _id = req.params._id;
+  {{controller_name}}.findOneAndUpdate({_id}, req.body, {
+    new: true
+  }).then({{controller_obj}} => {
+    if({{controller_obj}} == null) throw Error('No such Id found');
+    return res.status(201).json({{controller_obj}});
+  }).catch(err => errorHandler.throwErrorc(err, next));
+};
+
+exports.destroy = (req, res, next) => {
+  const _id = req.params._id;
+  {{controller_name}}.findOneAndDelete({_id})
+    .then((result) => {
+      if(result == null) throw Error("No such Id found");
+      res.status(200).json({message : 'Successfully Deleted!!'})
+    })
+    .catch(err => errorHandler.throwErrorc(err, next));
+};

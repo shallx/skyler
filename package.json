@@ -12,6 +12,7 @@
   "author": "Rafat Rashid",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.0",
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
     "execa": "^4.1.0",
@@ -22,5 +23,8 @@
     "ncp": "^2.0.0",
     "node-powershell": "^4.0.0",
     "pkg-install": "^1.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
   }
 }
