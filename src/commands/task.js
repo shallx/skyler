@@ -9,43 +9,59 @@ program
   .option("-a, --add <task>", 'Add task')
   .option("-r, --remove", "Remove task")
   .option("-l, --list", "List tasks")
-  .description("Trello")
+  .description("Trello task management")
   .action(async(obj) => {
     if(obj.add){
-      await api.createCard(obj.add);
-      console.log("Task Added Successfully");
-      process.exit();
-    }
-    if(obj.list){
-      let tasks = await api.getCards(obj.add);
-      tasks.map((task, index) => console.log(index+1+ '. '+chalk.cyanBright(task.name)));
-      process.exit();
-    }
-    if(obj.remove){
-      let cards = await api.getCards();
-      
-      inquirer
-      .prompt([
-        {
-          type: 'list',
-          name: 'task',
-          message: 'Select a task to remove?',
-          choices: cards.map((val) => val.name),
-        },
-      ])
-      .then(async(answers) => {
-        let id;
-        cards.forEach((card) => {
-          if(card.name == answers.task){
-            id = card.id;
-          }
-        });
-        var result = await api.removeCard(id);
-        console.log(result);
+      api.createCard(obj.add).then(result => {
+        console.log("Task Added Successfully");
         process.exit();
       }).catch(err => {
-        console.log(err);
+        console.log(chalk.redBright(err));
         process.exit();
       });
+    }
+    if(obj.list){
+      api.getCards(obj.add)
+        .then(tasks => {
+          tasks.map((task, index) => console.log(index+1+ '. '+chalk.cyanBright(task.name)));
+          process.exit();
+        })
+        .catch(err => {
+          console.log(chalk.redBright(err));
+          process.exit();
+        })
+    }
+    if(obj.remove){
+      let cardS;
+      api.getCards()
+        .then(cards => {
+          cardS = cards;
+          return inquirer
+          .prompt([
+            {
+              type: 'list',
+              name: 'task',
+              message: 'Select a task to remove?',
+              choices: cards.map((val) => val.name),
+            },
+          ])
+        })
+        .then(async(answers) => {
+          let id;
+          cardS.forEach((card) => {
+            if(card.name == answers.task){
+              id = card.id;
+            }
+          });
+          return api.removeCard(id);
+        })
+        .then(result => {
+          console.log(result);
+          process.exit();
+        })
+        .catch(err => {
+          console.log(chalk.red(err));
+          process.exit();
+        })
     }
   });

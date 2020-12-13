@@ -99,7 +99,3 @@ async function openProject() {
   }
   return;
 }
-
-
-// Trello api
-//https://api.trello.com/1/cards?name=card_name&idList=5fc37294869f4a07606ae4b2&key=1a2d8146bad80cf8489c4f3fe1ccd62b&token=4ec2e42aae54caba0a651ac17d05c7d0ad875f0233ce0ee6b7070be4e92a892a
