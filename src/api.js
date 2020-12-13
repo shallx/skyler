@@ -21,14 +21,16 @@ const createCard = async(name) => {
       return resolve(result);
     })
     .catch(err =>{
-      reject("Some error occured");
+      reject("Some error occured!!!");
     })
   })
 }
 
-const getCards = async() => {
+const getCards = async(id) => {
+  let listId = id || '5fc37294869f4a07606ae4b2';
+
   return new Promise((resolve,reject) => {
-    axios.get('lists/5fc37294869f4a07606ae4b2/cards')
+    axios.get('lists/'+listId+'/cards')
       .then(result => {
         const mapped_result = result.data.map((val,i) => {
           return {
@@ -39,7 +41,7 @@ const getCards = async() => {
         resolve(mapped_result);
       })
       .catch(err => {
-        reject(err);
+        reject("Some error occured!!!");
       })
   });
 }
@@ -48,7 +50,7 @@ const removeCard = async(id) => {
   return new Promise((resolve, reject) => {
     axios.delete('cards/'+id)
       .then(result => {
-        resolve("Success");
+        resolve("Task removed successfully!!!");
       })
       .catch(err =>{
         reject("Some error occured");
@@ -56,8 +58,23 @@ const removeCard = async(id) => {
   });
 }
 
+const moveCard = async(id) => {
+  return new Promise((resolve, reject) => {
+    axios.put('cards/'+id, {
+      idList : '5fc37294869f4a07606ae4b3'
+    })
+      .then(result => {
+        resolve("Task completed!!!");
+      })
+      .catch(err =>{
+        reject("Some error occured!!!");
+      });
+  });
+} 
+
 module.exports = {
   createCard,
   getCards,
-  removeCard
+  removeCard,
+  moveCard
 }
