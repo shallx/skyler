@@ -3,6 +3,7 @@
 ## Function
 
 - Open Few Applications
+
   - Anydesk
   - Vscode
   - MongoDBCompass
@@ -13,11 +14,13 @@
   - Search Everything
 
 - Bootstrap Template
+
   - NodeJs
   - VueJs
   - Laravel
 
 - Generate/Fetch Template
+
   - NodeJs
     - Model
     - Controller
@@ -25,9 +28,9 @@
 
 - Trello Task
   - Add Card
-  - Remove Card
   - List Cards
-
+  - Move Card
+  - Remove Card
 
 ## Technology Used
 
@@ -41,4 +44,6 @@
   - listr (for Listing successful Transfer)
   - execa (for executing shell commands)
   - fs-extra (for Generate Sub files)
+  - ncp (for copying template folder)
   - handlebar (for formating template )
+  - axios (for api connection with trello)
