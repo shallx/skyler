@@ -11,6 +11,11 @@ axios.defaults.params = {
   token
 }
 
+const list = {
+  'To Do' : '5fc37294869f4a07606ae4b2',
+  'Done' : '5fc37294869f4a07606ae4b3'
+}
+
 const createCard = async(name) => {
   return new Promise(async(resolve, reject) => {
     axios.post('cards', {
@@ -18,7 +23,7 @@ const createCard = async(name) => {
       idList : "5fc37294869f4a07606ae4b2",
     })
     .then(result => {
-      return resolve(result);
+      return resolve(result.data.id);
     })
     .catch(err =>{
       reject("Some error occured!!!");
@@ -42,6 +47,19 @@ const getCards = async(id) => {
       })
       .catch(err => {
         reject("Some error occured!!!");
+      })
+  });
+}
+const updateCard = async(id, desc) => {
+  return new Promise((resolve,reject) => {
+    axios.put('cards/'+id, {
+      desc
+    })
+      .then(result => {
+        resolve("Success!!!");
+      })
+      .catch(err => {
+        reject(err);
       })
   });
 }
@@ -76,5 +94,7 @@ module.exports = {
   createCard,
   getCards,
   removeCard,
-  moveCard
+  moveCard,
+  updateCard,
+  list
 }
