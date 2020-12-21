@@ -50,10 +50,15 @@ function fetch_files(lang, cmdObj) {
       _src = ".gitignore";
       _des = ".gitignore";
       break;
+    case "errors":
+      data = {};
+      _src = "node/errors.txt";
+      _des = "Controller/errors.js";
+      break;
     default:
       console.log("$n_lang does not matches with any template");
   }
-  const temp = fs.readFileSync(my_path.src(_src));
+  const temp = fs.readFileSync(my_path.fetch_src(_src));
   const template = handlebars.compile(temp.toString());
   const templated_data = template(data);
   fse

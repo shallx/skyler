@@ -10,7 +10,6 @@ const fs = require("fs");
 
 // import execa from "execa";
 const Listr = require("listr");
-const { projectInstall } = require("pkg-install");
 const execa = require("execa");
 const { log } = require("console");
 
@@ -26,7 +25,7 @@ program
     const tasks = new Listr([]);
     tasks.add({
       title: "Copy Project Files",
-      task: () => copyFiles(),
+      task: () => copyFiles(lang,subs),
     });
     if (cmdObj.git)
       tasks.add({
@@ -69,9 +68,9 @@ program.parse(process.argv);
 // const copyFiles = async () => {
 //   return copy(my_path.src("//node"), my_path.des, { clobber: false });
 // };
-async function copyFiles() {
+async function copyFiles(lang, subs) {
   const copy = promisify(ncp);
-  return copy(my_path.src("//node"), my_path.des, { clobber: false });
+  return copy(my_path.create_src(lang), my_path.des, { clobber: false });
 }
 
 async function gitInit() {
