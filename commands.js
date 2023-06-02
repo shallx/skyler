@@ -57,11 +57,14 @@ program.command("say <name> <age>").action((name, age) => {
   process.exit();
 });
 
+// Convert these to a barrel export file
 require('./src/commands/fetch');
   
 require('./src/commands/open');
 
 require('./src/commands/task');
+
+require('./src/commands/git');
 
 program.parse(process.argv);
 
