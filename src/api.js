@@ -112,14 +112,14 @@ const getRepos = async (opt) => {
           Authorization: "Bearer " + githubToken,
         },
         params: {
-          'per_page': 100,
+          per_page: 100,
           visibility,
-        }
+        },
       })
       .then((result) => {
         console.log("Total Results: ", result.data.length);
         const mapped_result = result.data.map((val, i) => {
-          return `${i+1}. ${val.name}`;
+          return `${i + 1}. ${val.name}`;
         });
 
         return resolve(mapped_result);
@@ -130,6 +130,35 @@ const getRepos = async (opt) => {
   });
 };
 
+const searchRepos = async (val, opt) => {
+  try {
+    const result = await axios.get(
+      "https://api.github.com/search/repositories",
+      {
+        headers: {
+          Authorization: "Bearer " + githubToken,
+        },
+        params: {
+          q: "user:shallx " + val,
+          type: "Repositories",
+        },
+      }
+    );
+    if(!opt.generate){
+      return result.data.items.map((val, i) => `${i + 1}. ${val.name}`);
+    } else {
+      if(opt.generate == "rahisa"){
+        return `git@github.com-rahisa:${result.data.items[0].full_name}.git`
+      } else {
+        return `git@github.com-shallx:${result.data.items[0].full_name}.git`
+      }
+    }
+    
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createCard,
   getCards,
@@ -138,4 +167,5 @@ module.exports = {
   updateCard,
   list,
   getRepos,
+  searchRepos,
 };

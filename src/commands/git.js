@@ -1,7 +1,7 @@
 const program = require("commander");
 const progs = require("../progs");
 const Shell = require("node-powershell");
-const { getRepos } = require("../api");
+const { getRepos, searchRepos } = require("../api");
 const ora = require("ora");
 
 const ps = new Shell({
@@ -12,25 +12,41 @@ const ps = new Shell({
 program
   .command("git <action> [val]")
   .option("-a, --all", "all repos")
-  .option("-p, --private", "user repos")
-  .option("-c, --public", "org repos")
+  .option("-u, --private", "user repos")
+  .option("-p, --public", "org repos")
+  .option("-g, --generate [name]", "Generate for user")
+  .option("-c, --clone", "Clone repo")
+  .option("-")
   .description("Github api")
   .action(async (action, val, opt) => {
     const act = action.toLowerCase();
+    const v = val.toLowerCase();
     if (act === "repos") {
-      // show loading spinner while waiting for response
-      const spinner = ora("Fetching Repos...").start();
-
-      // await new Promise((resolve) => setTimeout(resolve, 3000));
-      const repos = await getRepos(opt);
-      spinner.stop();
-      console.log(repos);
-    }
-    else if (act === "search"){
-      
-    } 
-    else {
+      await getGitRepos(v, opt);
+    } else if (act === "search") {
+      await getGitSearch(v, opt);
+    } else {
       console.log("Invalid action");
     }
     process.exit();
   });
+
+const getGitRepos = async (val, opt) => {
+  // Loading Spinner
+  const spinner = ora("Fetching Repos...").start();
+
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
+  const repos = await getRepos(opt);
+  spinner.stop();
+  console.log(repos);
+};
+
+const getGitSearch = async (val, opt) => {
+  // Loading Spinner
+  const spinner = ora("Searching Repos...").start();
+
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
+  const repos = await searchRepos(val, opt);
+  spinner.stop();
+  console.log(repos);
+};
