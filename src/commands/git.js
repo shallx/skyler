@@ -2,6 +2,7 @@ const program = require("commander");
 const progs = require("../progs");
 const Shell = require("node-powershell");
 const { getRepos } = require("../api");
+const ora = require("ora");
 
 const ps = new Shell({
   executionPolicy: "Bypass",
@@ -16,23 +17,20 @@ program
   .description("Github api")
   .action(async (action, val, opt) => {
     const act = action.toLowerCase();
-    if(act === 'repos'){
-        // show loading spinner while waiting for response
-        
-        const repos = await getRepos(opt);
-        console.log(repos);
-    } else {
-        console.log("Invalid action");
+    if (act === "repos") {
+      // show loading spinner while waiting for response
+      const spinner = ora("Fetching Repos...").start();
+
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
+      const repos = await getRepos(opt);
+      spinner.stop();
+      console.log(repos);
+    }
+    else if (act === "search"){
+      
+    } 
+    else {
+      console.log("Invalid action");
     }
     process.exit();
-    // val = val.toLowerCase();
-    // ps.addCommand(`start ${progs[val]}`);
-    // ps.invoke()
-    //   .then(res => {
-    //     process.exit();
-    //   })
-    //   .catch(err => {
-    //     console.log(`${chalk.cyanBright(val)} does not match with any program`);
-    //     process.exit();
-    //   });
   });
