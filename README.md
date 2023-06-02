@@ -47,3 +47,10 @@
   - ncp (for copying template folder)
   - handlebar (for formating template )
   - axios (for api connection with trello)
+
+
+## Installation
+- Clone the repo
+- Run `npm install`
+- Run `npm link`
+- Run `skyler --help` 
