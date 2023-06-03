@@ -57,8 +57,12 @@ program.command("say <name> <age>").action((name, age) => {
 
 // Convert these to a barrel export file
 require('./src/commands/fetch');
-  
+
+// use this for windows pc
 // require('./src/commands/open');
+
+// use this for mac pc
+require('./src/commands/open_mac');
 
 require('./src/commands/task');
 

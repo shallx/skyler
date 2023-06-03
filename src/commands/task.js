@@ -2,6 +2,7 @@ const api = require("../api");
 const program = require("commander");
 const inquirer = require('inquirer');
 const chalk = require('chalk');
+const ora = require("ora");
 
 
 program
@@ -16,19 +17,24 @@ program
     try {
       let result = null;
       if(obj.add){
+        const spinner = ora("Adding task").start();
         result = await api.createCard(obj.add);
         if(obj.desc) result = await api.updateCard(result, obj.desc);
         else result = "Task added Successfully!!!";
       }
       if(obj.list){
         let list_id = await getListId();
+        const spinner = ora("Loading Tasks").start();
         let tasks = await api.getCards(list_id)
+        spinner.stop()
         tasks.map((task, index) => console.log(index+1+ '. '+chalk.cyanBright(task.name)));
         process.exit();
       }
       if(obj.remove){
+        const loading = ora("Loading tasks").start() 
         let list_id = await getListId();
         let cards = await api.getCards(list_id)
+        loading.stop();
         let answers = await inquirer
           .prompt([
             {
@@ -44,7 +50,9 @@ program
             id = card.id;
           }
         });
+        loading = ora("Removing Tasks").start();
         result = await api.removeCard(id);
+        loading.stop();
       }
       if(obj.move){
         let cards = await api.getCards()

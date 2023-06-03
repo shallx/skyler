@@ -6,6 +6,12 @@ const key = process.env.TRELLO_KEY;
 const token = process.env.TRELLO_TOKEN;
 const githubToken = process.env.GITHUB_TOKEN;
 
+const trelloUrl = "https://api.trello.com/1/";
+const trelloParams = {
+  key,
+  token,
+}
+
 axios.default.baseURL = "https://api.trello.com/1/";
 axios.default.params = {
   key,
@@ -20,9 +26,10 @@ const list = {
 const createCard = async (name) => {
   return new Promise(async (resolve, reject) => {
     axios
-      .post("cards", {
+      .post(trelloUrl+"cards", {
         name: name,
         idList: "5fc37294869f4a07606ae4b2",
+        ...trelloParams
       })
       .then((result) => {
         return resolve(result.data.id);
@@ -38,7 +45,7 @@ const getCards = async (id) => {
 
   return new Promise((resolve, reject) => {
     axios
-      .get("lists/" + listId + "/cards")
+      .get(trelloUrl+"lists/" + listId + "/cards", {params : trelloParams})
       .then((result) => {
         const mapped_result = result.data.map((val, i) => {
           return {
@@ -49,6 +56,7 @@ const getCards = async (id) => {
         resolve(mapped_result);
       })
       .catch((err) => {
+        console.log(err);
         reject("Some error occured!!!");
       });
   });
@@ -56,8 +64,9 @@ const getCards = async (id) => {
 const updateCard = async (id, desc) => {
   return new Promise((resolve, reject) => {
     axios
-      .put("cards/" + id, {
+      .put(trelloUrl+"cards/" + id, {
         desc,
+        params: trelloParams
       })
       .then((result) => {
         resolve("Success!!!");
@@ -71,7 +80,7 @@ const updateCard = async (id, desc) => {
 const removeCard = async (id) => {
   return new Promise((resolve, reject) => {
     axios
-      .delete("cards/" + id)
+      .delete(trelloUrl+ "cards/" + id, {params: trelloParams})
       .then((result) => {
         resolve("Task removed successfully!!!");
       })
@@ -84,8 +93,9 @@ const removeCard = async (id) => {
 const moveCard = async (id) => {
   return new Promise((resolve, reject) => {
     axios
-      .put("cards/" + id, {
+      .put(trelloUrl+ "cards/" + id, {
         idList: "5fc37294869f4a07606ae4b3",
+        params: trelloParams
       })
       .then((result) => {
         resolve("Task completed!!!");
