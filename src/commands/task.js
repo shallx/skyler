@@ -28,6 +28,7 @@ program
         let tasks = await api.getCards(list_id)
         spinner.stop()
         tasks.map((task, index) => console.log(index+1+ '. '+chalk.cyanBright(task.name)));
+        console.log(chalk.bold.green("✓") + " Loaded Tasks Successfully!");
         process.exit();
       }
       if(obj.remove){
@@ -53,6 +54,7 @@ program
         loading = ora("Removing Tasks").start();
         result = await api.removeCard(id);
         loading.stop();
+        console.log(chalk.bold.green("✓") + " Removed Task Successfully!");
       }
       if(obj.move){
         let cards = await api.getCards()
@@ -71,9 +73,11 @@ program
             id = card.id;
           }
         });
+        loading = ora("Moving Tasks").start();
         result = await api.moveCard(id);
+        loading.stop();
+        console.log(chalk.bold.green("✓") + " Moved Task Successfully!");
       }
-      console.log(chalk.cyanBright(result));
       
       if(obj.desc && !obj.add) throw Error("--desc || -d should always be used with --add || -a");
 
