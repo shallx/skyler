@@ -144,15 +144,7 @@ const searchRepos = async (val, opt) => {
         },
       }
     );
-    if(!opt.generate){
-      return result.data.items.map((val, i) => `${i + 1}. ${val.name}`);
-    } else {
-      if(opt.generate == "rahisa"){
-        return `git@github.com-rahisa:${result.data.items[0].full_name}.git`
-      } else {
-        return `git@github.com-shallx:${result.data.items[0].full_name}.git`
-      }
-    }
+    return result.data.items.map((val, i) => val.full_name);
     
   } catch (error) {
     console.log(error);

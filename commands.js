@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 const program = require("commander");
-const Shell = require("node-powershell");
 const chalk = require("chalk");
 
 const ncp = require("ncp");
@@ -11,7 +10,6 @@ const fs = require("fs");
 // import execa from "execa";
 const Listr = require("listr");
 const execa = require("execa");
-const { log } = require("console");
 
 program.version("1.0.0").description("My personal CLI Assistant");
 
@@ -60,7 +58,7 @@ program.command("say <name> <age>").action((name, age) => {
 // Convert these to a barrel export file
 require('./src/commands/fetch');
   
-require('./src/commands/open');
+// require('./src/commands/open');
 
 require('./src/commands/task');
 
