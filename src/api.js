@@ -66,7 +66,7 @@ const updateCard = async (id, desc) => {
     axios
       .put(trelloUrl+"cards/" + id, {
         desc,
-        params: trelloParams
+        ...trelloParams
       })
       .then((result) => {
         resolve("Success!!!");
@@ -95,7 +95,7 @@ const moveCard = async (id) => {
     axios
       .put(trelloUrl+ "cards/" + id, {
         idList: "5fc37294869f4a07606ae4b3",
-        params: trelloParams
+        ...trelloParams
       })
       .then((result) => {
         resolve("Task completed!!!");

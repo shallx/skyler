@@ -4,7 +4,10 @@ const progs = {
     node : '~/Documents/Development/NodeJs',
     nodejs : '~/Documents/Development/NodeJs',
     react : '~/Documents/Development/React',
-    downloads: '~/Downloads'
+    downloads: '~/Downloads',
+    chrome : "-a \"Google Chrome\"",
+    edge : "-a \"Microsoft Edge Dev\"",
+    vscode : "-a \"Visual Studio Code\"",
 
 }
 

@@ -3,6 +3,7 @@ const { getRepos, searchRepos } = require("../api");
 const ora = require("ora");
 const inquirer = require('inquirer');
 const chalk = require("chalk");
+const {executeListOfCommands} = require("../utils/common")
 
 
 program
@@ -12,6 +13,7 @@ program
   .option("-p, --public", "org repos")
   .option("-g, --generate [name]", "Generate for user")
   .option("-c, --clone [name]", "Clone repo")
+  .option("-e, --execute", "Execute the command")
   .description("Github api")
   .action(async (action, val, opt) => {
     const act = action.toLowerCase();
@@ -61,9 +63,21 @@ const getGitSearch = async (val, opt) => {
     else usr = opt.generate || opt.clone
 
     if(opt.generate) {
-      console.log(chalk.bold.blueBright('git remote add origin ' + `git@github.com-${usr}:${answers.repo}.git`))
+      const res = 'git remote add origin ' + `git@github.com-${usr}:${answers.repo}.git`;
+      if(usr == 'shallx' && opt.execute){
+        // await executeListOfCommands([res, "git config user.name \'Rafat Rashid Rahi\'", "git config user.email \'rafat.rashid247@gmail.com\'"])
+        await executeListOfCommands([res])
+      } else {
+        console.log(chalk.bold.blueBright(res))
+      }
     } else {
-      console.log(chalk.bold.blueBright('git clone ' + `git@github.com-${usr}:${answers.repo}.git`))
+      const res = 'git clone ' + `git@github.com-${usr}:${answers.repo}.git`;
+      if(usr == 'shallx' && opt.execute){
+        // await executeListOfCommands([res, "git config user.name \'Rafat Rashid Rahi\'", "git config user.email \'rafat.rashid247@gmail.com\'"])
+        await executeListOfCommands([res])
+      } else {
+        console.log(chalk.bold.blueBright(res))
+      }
     }
 
 
