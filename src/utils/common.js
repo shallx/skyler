@@ -49,14 +49,14 @@ const installDepencencies = async ({folder}) => {
   let depencencyType = null;
   console.log("Platform: ", platform);
   if(platform === "win32") {
-    const result = await executeCommand({command: "IF EXIST package-lock.json echo true", folder});
+    let result = await executeCommand({command: "IF EXIST package-lock.json echo true", folder});
     if(result.trim() === "true") depencencyType = "npm";
     result = await executeCommand({command: "IF EXIST yarn.lock echo true", folder});
     if(result.trim() === "true") depencencyType = "yarn";
     result = await executeCommand({command: "IF EXIST pubspec.yaml echo true", folder});
     if(result.trim() === "true") depencencyType = "flutter";
   } else if(platform === "darwin"){
-    const result = await executeCommand({command: "[[ -f package-lock.json ]] && echo \"This file exists!\"", folder})
+    let result = await executeCommand({command: "[[ -f package-lock.json ]] && echo \"This file exists!\"", folder})
     if(result.trim() === "This file exists!") depencencyType = "npm";
     result = await executeCommand({command: "[[ -f yarn.lock ]] && echo \"This file exists!\"", folder})
     if(result.trim() === "This file exists!") depencencyType = "yarn";
@@ -81,9 +81,26 @@ const installDepencencies = async ({folder}) => {
 
 
 }
+
+const checkIfDirectoryExists = async (path) => {
+  try {
+    const platform = process.platform;
+    let result = null;
+    if(platform === "win32") {
+      result = await executeCommand({command: "IF EXIST "+ path +" echo true"});
+      return result.trim() === "true";
+    } else if(platform === "darwin"){
+      result = await executeCommand({command: "[[ -f "+ path +" ]] && echo true"})
+      return result.trim() === "true";
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 module.exports = {
   sleepy,
   executeCommand,
   executeListOfCommands,
   installDepencencies,
+  checkIfDirectoryExists
 }

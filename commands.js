@@ -12,7 +12,7 @@ const Listr = require("listr");
 const execa = require("execa");
 require("dotenv").config();
 
-program.version("1.0.0").description("My personal CLI Assistant");
+program.version("1.0.0").description(`${chalk.bold.blue("Rahi's personal CLI Assistant")} ${chalk.bold.magentaBright.underline("The SKYLER")}`);
 
 program
   .command("create <lang> <subs>")
@@ -59,11 +59,8 @@ program.command("say <name> <age>").action((name, age) => {
 // Convert these to a barrel export file
 require('./src/commands/fetch');
 
-// use this for windows pc
-// require('./src/commands/open');
-
-// use this for mac pc
-require('./src/commands/open_mac');
+if(process.platform === "win32") require('./src/commands/open');
+else if(process.platform === "darwin") require('./src/commands/open_mac');
 
 require('./src/commands/task');
 

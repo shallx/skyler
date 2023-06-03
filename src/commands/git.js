@@ -3,7 +3,7 @@ const { getRepos, searchRepos } = require("../api");
 const ora = require("ora");
 const inquirer = require("inquirer");
 const chalk = require("chalk");
-const { executeListOfCommands, installDepencencies } = require("../utils/common");
+const { executeListOfCommands, installDepencencies, executeCommand, checkIfDirectoryExists } = require("../utils/common");
 
 program
   .command("git <action> [val]")
@@ -13,6 +13,7 @@ program
   .option("-g, --generate [name]", "Generate for user")
   .option("-c, --clone [name]", "Clone repo")
   .option("-e, --execute", "Execute the command")
+  .option("-d, --dependencies", "Install dependencies")
   .description("Github api")
   .action(async (action, val, opt) => {
     const act = action.toLowerCase();
@@ -74,13 +75,20 @@ const getGitSearch = async (val, opt) => {
       const res = "git clone " + `git@github.com-${usr}:${answers.repo}.git`;
       if (usr == "shallx" && opt.execute) {
         const folderName = answers.repo.split("/")[1];
+        // if folderName already exists, then stop execution
+        const directoryExist = await checkIfDirectoryExists(folderName);
+        if(directoryExist) {
+          console.log(res);
+          console.log(chalk.bold.red("✗ ") + "Folder already exists!");
+          process.exit();
+        };
         await executeListOfCommands([
           {command: res, message: "Cloning Done!"},
           {command: "git config user.name \"Rafat Rashid Rahi\"", folder: folderName, message: "Configured user name!"},
           {command: "git config user.email rafat.rashid247@gmail.com", folder: folderName, message: "Configured user email!"},
-          {command: `code ${folderName}`}
         ]);
-        installDepencencies({folder: folderName});
+        if(opt.dependencies) await installDepencencies({folder: folderName});
+        await executeCommand({command: `code ${folderName}`})
         console.log(chalk.bold.green("✓") + " Cloned Successfully!");
       } 
       else {
