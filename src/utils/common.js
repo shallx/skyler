@@ -4,6 +4,7 @@ const {execSync} = require("node:child_process")
 const ora = require("ora");
 const PATH = require("path");
 const chalk = require('chalk');
+const execa = require('execa');
 
 const sleepy = (msec) =>
   new Promise((resolve, _) => {
@@ -97,10 +98,21 @@ const checkIfDirectoryExists = async (path) => {
     console.log(error);
   }
 };
+
+async function executeExeca() {
+  const result = await execa("npm", ["install"]);
+  if (result.failed) {
+    return Promise.reject(new Error("Failed to install package"));
+  }
+  return;
+}
+
+
 module.exports = {
   sleepy,
   executeCommand,
   executeListOfCommands,
   installDepencencies,
-  checkIfDirectoryExists
+  checkIfDirectoryExists,
+  executeExeca,
 }
