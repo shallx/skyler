@@ -10,6 +10,7 @@ const fs = require("fs");
 // import execa from "execa";
 const Listr = require("listr");
 const execa = require("execa");
+require("dotenv").config();
 
 program.version("1.0.0").description("My personal CLI Assistant");
 
