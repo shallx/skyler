@@ -32,6 +32,12 @@
   - Move Card
   - Remove Card
 
+- Github cli
+  - Getting all repo
+  - Searching repo
+  - Getting clone link or remote adding link
+  - Executing clone command and installing dependencies auto (command: skyler git search prms -c -e -d)
+
 ## Technology Used
 
 - Nodejs
@@ -54,3 +60,8 @@
 - Run `npm install`
 - Run `npm link`
 - Run `skyler --help` 
+- Create and Setup ENV file
+
+## Compatibility
+- Windows
+- MacOs

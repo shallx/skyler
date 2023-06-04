@@ -3,7 +3,13 @@ const { getRepos, searchRepos } = require("../api");
 const ora = require("ora");
 const inquirer = require("inquirer");
 const chalk = require("chalk");
-const { executeListOfCommands, installDepencencies, executeCommand, checkIfDirectoryExists } = require("../utils/common");
+const {
+  executeListOfCommands,
+  installDepencencies,
+  executeCommand,
+  checkIfDirectoryExists,
+  executeExeca,
+} = require("../utils/common");
 
 program
   .command("git <action> [val]")
@@ -45,10 +51,10 @@ const getGitSearch = async (val, opt) => {
   // await new Promise((resolve) => setTimeout(resolve, 3000));
   const repos = await searchRepos(val, opt);
   spinner.stop();
-  console.log(repos);
   if (repos && repos.length > 0 && (opt.generate || opt.clone)) {
     let option = opt.generate ? "generate" : "clone";
 
+    console.log("\n")
     const answers = await inquirer.prompt([
       {
         type: "list",
@@ -67,31 +73,40 @@ const getGitSearch = async (val, opt) => {
         "git remote add origin " + `git@github.com-${usr}:${answers.repo}.git`;
       if (usr == "shallx" && opt.execute) {
         // await executeListOfCommands([res, "git config user.name \'Rafat Rashid Rahi\'", "git config user.email \'rafat.rashid247@gmail.com\'"])
-        await executeListOfCommands([{ command: res, message: "Done!"}]);
+        await executeListOfCommands([{ command: res, message: "Done!" }]);
       } else {
         console.log(chalk.bold.blueBright(res));
       }
     } else {
-      const res = "git clone " + `git@github.com-${usr}:${answers.repo}.git`;
+      const convertedRepo = `git@github.com-${usr}:${answers.repo}.git`;
+      const res = "git clone " + convertedRepo;
       if (usr == "shallx" && opt.execute) {
         const folderName = answers.repo.split("/")[1];
         // if folderName already exists, then stop execution
         const directoryExist = await checkIfDirectoryExists(folderName);
-        if(directoryExist) {
+        if (directoryExist) {
           console.log(res);
           console.log(chalk.bold.red("✗ ") + "Folder already exists!");
           process.exit();
-        };
+        }
+        await executeExeca({ command: 'git', args: ["clone", convertedRepo], loadingMessage: "Cloning...", successMessage: "Cloning Done!"})
         await executeListOfCommands([
-          {command: res, message: "Cloning Done!"},
-          {command: "git config user.name \"Rafat Rashid Rahi\"", folder: folderName, message: "Configured user name!"},
-          {command: "git config user.email rafat.rashid247@gmail.com", folder: folderName, message: "Configured user email!"},
+          // { command: res, message: "Cloning Done!" },
+          {
+            command: 'git config user.name "Rafat Rashid Rahi"',
+            folder: folderName,
+            message: "Configured user name!",
+          },
+          {
+            command: "git config user.email rafat.rashid247@gmail.com",
+            folder: folderName,
+            message: "Configured user email!",
+          },
         ]);
-        if(opt.dependencies) await installDepencencies({folder: folderName});
-        await executeCommand({command: `code ${folderName}`})
+        if (opt.dependencies) await installDepencencies({ folder: folderName });
+        await executeCommand({ command: `code ${folderName}` });
         console.log(chalk.bold.green("✓") + " Cloned Successfully!");
-      } 
-      else {
+      } else {
         console.log(chalk.bold.blueBright(res));
       }
     }
