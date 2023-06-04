@@ -9,7 +9,7 @@ const execa = require("execa");
 
 require("dotenv").config();
 
-program.version("1.0.0").description(`${chalk.bold.blue("Rahi's personal CLI Assistant")} ${chalk.bold.magentaBright.underline("The SKYLER")}`);
+program.version("0.2.1").description(`${chalk.bold.blue("Rahi's personal CLI Assistant")} ${chalk.bold.magentaBright.underline("The SKYLER")}`);
 
 
 program.command("say <name> <age>").action((name, age) => {

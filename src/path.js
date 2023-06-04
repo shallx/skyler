@@ -7,5 +7,6 @@ module.exports = {
   create_src: function(ext){
     return path.resolve(__dirname + '/templates/projects/'+ ext || '')
   },
-  des: process.cwd()
+  des: process.cwd(),
+  projectPath: (folder) => path.join(process.cwd(), folder),
 }
