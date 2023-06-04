@@ -34,8 +34,11 @@ export class AuthService {
     if (!pwMatches) {
       throw new ForbiddenException('Credentials Incorrect');
     }
-    // delete user.password
-    return this.signToken(user.id, user.email);
+    delete user.password;
+    return {
+      ...user,
+      accessToken: await this.signToken(user.id, user.email),
+    };
   }
 
   async signup(dto: SignUpDto) {
@@ -43,12 +46,16 @@ export class AuthService {
     try {
       const user = await this.prisma.user.create({
         data: {
+          name: dto.name,
           email: dto.email,
           password: pass,
         },
       });
       delete user.password;
-      return this.signToken(user.id, user.email);
+      return {
+        ...user,
+        accessToken: await this.signToken(user.id, user.email),
+      };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.log('THIS IS AN ERROR');
@@ -60,10 +67,7 @@ export class AuthService {
     }
   }
 
-  async signToken(
-    userId: number,
-    email: string,
-  ): Promise<{ access_token: string }> {
+  async signToken(userId: number, email: string): Promise<string> {
     const payload = {
       sub: userId,
       email,
@@ -72,8 +76,6 @@ export class AuthService {
       expiresIn: '15d',
       secret: this.config.get('JWT_SECRET'),
     });
-    return {
-      access_token: token,
-    };
+    return token;
   }
 }

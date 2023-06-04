@@ -16,11 +16,12 @@ program
   .option("-r, --open", "Open Project")
   .description("Create Template")
   .action(async (lang, project_name, cmdObj) => {
-    const tasks = new Listr([]);
     if(lang == "nest"){
       await nestPrismaGenerate(project_name);
       process.exit();
     }
+    
+    const tasks = new Listr([]);
 
     tasks.add({
       title: "Copy Project Files",
@@ -134,6 +135,11 @@ const nestPrismaGenerate = async (projectName) => {
   tasks.add({
     title: "Fetching Template",
     task: () => copyFiles("nest", projectName),
+  });
+
+  tasks.add({
+    title: "Opening VSCode",
+    task: () => executeExeca({ command: "code", args: [projectName] }),
   });
 
   await tasks.run().catch((err) => {
