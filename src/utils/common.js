@@ -22,7 +22,7 @@ const executeListOfCommands = async (arry) => {
 };
 
 // Executues a single command
- // path, folder and message are optional
+// path, folder and message are optional
 const executeCommand = async ({ command, folder, path, message }) => {
   return new Promise(async (resolve, reject) => {
     // finding execution path
@@ -66,22 +66,25 @@ const installDepencencies = async ({ folder }) => {
       folder,
     });
     if (result.trim() === "true") depencencyType = "flutter";
-  } else if (platform === "darwin") {
+  }
+
+  // for platform MacOS
+  else if (platform === "darwin") {
     let result = await executeCommand({
-      command: '[[ -f package-lock.json ]] && echo "This file exists!"',
+      command: '[[ -f package-lock.json ]] || echo "false"',
       folder,
     });
-    if (result.trim() === "This file exists!") depencencyType = "npm";
+    if (result.trim() != "false") depencencyType = "npm";
     result = await executeCommand({
-      command: '[[ -f yarn.lock ]] && echo "This file exists!"',
+      command: '[[ -f yarn.lock ]] || echo "false"',
       folder,
     });
-    if (result.trim() === "This file exists!") depencencyType = "yarn";
+    if (result.trim() != "false") depencencyType = "yarn";
     result = await executeCommand({
-      command: '[[ -f pubspec.yaml ]] && echo "This file exists!"',
+      command: '[[ -f pubspec.yaml ]] || echo "false"',
       folder,
     });
-    if (result.trim() === "This file exists!") depencencyType = "flutter";
+    if (result.trim() != "false") depencencyType = "flutter";
   }
 
   // if no depencency installer type is found, then return
@@ -114,7 +117,6 @@ const installDepencencies = async ({ folder }) => {
   console.log(chalk.bold.green("✓ ") + "Dependencies installed");
 };
 
-
 // Based on type of platform, check if directory exists
 const checkIfDirectoryExists = async (path) => {
   try {
@@ -127,9 +129,9 @@ const checkIfDirectoryExists = async (path) => {
       return result.trim() === "true";
     } else if (platform === "darwin") {
       result = await executeCommand({
-        command: "[[ -f " + path + " ]] && echo true",
+        command: "[[ -f " + path + " ]] || echo false",
       });
-      return result.trim() === "true";
+      return result.trim() != "false";
     }
   } catch (error) {
     console.log(error);
@@ -151,25 +153,25 @@ const executeExeca = async ({
 
   try {
     // Loader
-  let spinner;
-  if (loadingMessage) spinner = ora(loadingMessage).start();
+    let spinner;
+    if (loadingMessage) spinner = ora(loadingMessage).start();
 
-  // Running main command
-  const result = await execa(command, args, { cwd: _path });
+    // Running main command
+    const result = await execa(command, args, { cwd: _path });
 
-  // Stopping loader
-  if (spinner) spinner.stop();
+    // Stopping loader
+    if (spinner) spinner.stop();
 
-  if (result.failed) {
-    console.log(chalk.bold.red("✗ ") + "Some error occured!");
-  } else {
-    // if Sucess message is provided, then print it
-    if (successMessage) console.log(chalk.bold.green("✓ ") + successMessage);
-  }
+    if (result.failed) {
+      console.log(chalk.bold.red("✗ ") + "Some error occured!");
+    } else {
+      // if Sucess message is provided, then print it
+      if (successMessage) console.log(chalk.bold.green("✓ ") + successMessage);
+    }
   } catch (error) {
     return Promise.reject(new Error(error));
   }
-  
+
   return;
 };
 

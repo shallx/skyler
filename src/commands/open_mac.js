@@ -2,7 +2,7 @@ const program = require("commander");
 const { exec, execSync } = require("node:child_process");
 const progs = require("../configs/progs_m2");
 const chalk = require("chalk");
-const { executeCommand, checkIfDirectoryExists } = require("../utils/common");
+const { executeCommand, checkIfDirectoryExists, executeExeca } = require("../utils/common");
 
 const description = `
 Open's files or directory
