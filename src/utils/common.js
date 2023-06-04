@@ -88,30 +88,29 @@ const installDepencencies = async ({ folder }) => {
   if (!depencencyType) return;
 
   // install depencencies
-  const spinner = ora("Installing dependencies...").start();
+
   if (depencencyType === "npm") {
-    await executeExeca({
+    return await executeExeca({
       command: "npm",
       args: ["install"],
       folder,
       loadingMessage: "Running npm install...",
     });
   } else if (depencencyType === "yarn") {
-    await executeExeca({
+    return await executeExeca({
       command: "yarn",
       args: ["install"],
       folder,
       loadingMessage: "Running yarn install...",
     });
   } else if (depencencyType === "flutter") {
-    await executeExeca({
+    return await executeExeca({
       command: "flutter",
       args: ["pub", "get"],
       folder,
       loadingMessage: "Running flutter pub get...",
     });
   }
-  spinner.stop();
   console.log(chalk.bold.green("✓ ") + "Dependencies installed");
 };
 
@@ -150,7 +149,8 @@ const executeExeca = async ({
   if (path) _path = path;
   else if (folder) _path = PATH.join(_path, folder);
 
-  // Loader
+  try {
+    // Loader
   let spinner;
   if (loadingMessage) spinner = ora(loadingMessage).start();
 
@@ -166,6 +166,10 @@ const executeExeca = async ({
     // if Sucess message is provided, then print it
     if (successMessage) console.log(chalk.bold.green("✓ ") + successMessage);
   }
+  } catch (error) {
+    return Promise.reject(new Error(error));
+  }
+  
   return;
 };
 
