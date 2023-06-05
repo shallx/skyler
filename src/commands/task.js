@@ -19,6 +19,7 @@ program
       if(obj.add){
         const spinner = ora("Adding task").start();
         result = await api.createCard(obj.add);
+        spinner.stop();
         if(obj.desc) result = await api.updateCard(result, obj.desc);
         else result = "Task added Successfully!!!";
       }

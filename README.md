@@ -53,6 +53,7 @@
   - ncp (for copying template folder)
   - handlebar (for formating template )
   - axios (for api connection with trello)
+  - ora (for loading animation)
 
 
 ## Installation
@@ -61,6 +62,9 @@
 - Run `npm link`
 - Run `skyler --help` 
 - Create and Setup ENV file
+
+## Uninstall
+- Run `npm rm --global foo`
 
 ## Compatibility
 - Windows
