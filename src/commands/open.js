@@ -1,6 +1,7 @@
 const program = require("commander");
 const progs = require("../progs");
 const Shell = require("node-powershell");
+const chalk = require("chalk");
 
 const ps = new Shell({
   executionPolicy: "Bypass",
