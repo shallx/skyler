@@ -24,7 +24,7 @@ program
   .option("-c, --clone [name]", "Clone repo")
   .option("-e, --execute", "Execute the command")
   .option("-d, --dependencies", "Install dependencies")
-  .option("-u", "--user [name]", "User name for git admin")
+  .option("-u, --user [name]", "User name for git admin")
   .description(description)
   .action(async (action, val, opt) => {
     const act = action.toLowerCase();
@@ -33,6 +33,8 @@ program
       await getGitRepos(v, opt);
     } else if (act === "search") {
       await getGitSearch(v, opt);
+    } else if (act === "generate") {
+      await generate(v, opt);
     } else {
       console.log("Invalid action");
     }
@@ -175,20 +177,23 @@ const getGitSearch = async (val, opt) => {
 // Generates clone url if only val is provided and default user is shallx
 // Remote url is provided if opt.remote is true
 // change user if opt.user is provided
-const generate = async(action, val, opt) => {
-  if(!val || val == '') {
-    console.log('Please provide a repo name');
+const generate = async (val, opt) => {
+  if (!val || val == "") {
+    console.log("Please provide a repo name");
     process.exit();
   }
   // check if val contains git@ at the beginning
-  if(typeof val === 'string' && val.startsWith('git@github.com')) {
-    if(opt.remote) {
-      if(opt.user) {
-        const repo = val.split(':')[1];
-      }
+  if (typeof val === "string" && val.startsWith("git@github.com")) {
+    const repo = val.replace(
+      "github.com",
+      `github.com-${opt.user ? opt.user : "shallx"}`
+    );
+    if (opt.remote) {
+      console.log(chalk.bold.blueBright(`git remote add origin ${repo}`));
+    } else {
+      console.log(chalk.bold.blueBright(`git clone ${repo}`));
     }
   } else {
-    console.log('Invalid repo name');
+    console.log("Invalid repo name");
   }
-
-}
+};
