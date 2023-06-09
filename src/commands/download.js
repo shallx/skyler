@@ -4,11 +4,19 @@ const ora = require("ora");
 const { getTiktokVideoDownloadUrl, dlVideo } = require("../api");
 const Listr = require("listr");
 
+const description = `
+    Download media from various platforms
+    examples: 1. skyler download -t <tiktok url>
+              Action: Fetches download url and downloads it
+              2. skyler download -i <instagram url>
+              Action: Fetches download url and downloads it
+`
+
 program
   .command("download")
   .option("-t, --tiktok <url>", "Download tiktok videos")
   .option("-i, --instagram <url>", "Download instagram videos")
-  .description("Downloads media from various platforms")
+  .description(description)
   .action(async (command) => {
     if (command.tiktok) {
       const result = await dlTiktokVideo(command.tiktok);

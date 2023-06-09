@@ -4,6 +4,11 @@ const inquirer = require('inquirer');
 const chalk = require('chalk');
 const ora = require("ora");
 
+const description = `
+    Trello Api
+    A simple todo cli using trello. U can add tasks, remove tasks,
+    list tasks and move tasks from todo to done.
+`
 
 program
   .command("task")
@@ -12,7 +17,7 @@ program
   .option("-l, --list", "List tasks")
   .option("-m, --move", "Move task to done")
   .option("-d, --desc <desk>", "Description for created card")
-  .description("Trello task management")
+  .description(description)
   .action(async(obj) => {
     try {
       let result = null;
