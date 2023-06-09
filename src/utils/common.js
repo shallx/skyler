@@ -175,6 +175,11 @@ const executeExeca = async ({
   return;
 };
 
+const validateEmail = (email) => {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+};
+
 module.exports = {
   sleepy,
   executeCommand,
@@ -182,4 +187,5 @@ module.exports = {
   installDepencencies,
   checkIfDirectoryExists,
   executeExeca,
+  validateEmail,
 };

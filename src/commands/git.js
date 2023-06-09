@@ -8,12 +8,32 @@ const {
   installDepencencies,
   checkIfDirectoryExists,
   executeExeca,
+  validateEmail,
 } = require("../utils/common");
 
 const description = `
-  Github Api
-  action = [repos, search, generate]
+    Github Api
+    action   =  [repos, search, generate]
+    repos    =  fetches repos from authenticated (includes orgs repos)
+                supported params = [all, private, public]
+                default options = [all]
+    search   =  searches repos from use authenticated repos
+                supported params = [clone, remote, execute, dependencies, user]
+                default options = []
+    generate =  generates clone url or remote url
+                supported params = [clone, remote, execute, dependencies, user]
+                default options = [clone, user = shallx]
 `;
+// Examples of commands
+// 1. skyler git repos -x
+// Output: fetches only private repos of usser
+// 2. skyler git search prms -c -e -d
+// Output: cloans the repo, installs dependencies and opens vscode
+// 3. skyler git search prms -r -u rahi-staff
+// Output: generates remote url for rahi-staff
+// 4. skyler git generate git@github:shallx/skyler
+// Output: generates clone url for shallx
+// 5. skyler git generate git@github:shallx/skyler -c -
 
 program
   .command("git <action> [val]")
@@ -188,10 +208,104 @@ const generate = async (val, opt) => {
       "github.com",
       `github.com-${opt.user ? opt.user : "shallx"}`
     );
-    if (opt.remote) {
-      console.log(chalk.bold.blueBright(`git remote add origin ${repo}`));
-    } else {
-      console.log(chalk.bold.blueBright(`git clone ${repo}`));
+    const user = opt.user ? opt.user : "shallx";
+
+    // If not execute then print on the console
+    if (!opt.execute) {
+      if (opt.remote) {
+        console.log(chalk.bold.blueBright(`git remote add origin ${repo}`));
+      } else {
+        console.log(chalk.bold.blueBright(`git clone ${repo}`));
+      }
+    }
+
+    // Else execute the command
+    else {
+      // Finding Email
+      let email;
+      if (user == "shallx") {
+        email = "rafat.rashid247@gmail.com";
+      } else if (user == "rahi-staff") {
+        email = "rafatrahi@staffasia.org";
+      } else {
+        const answer = await inquirer.prompt([
+          {
+            type: "input",
+            name: "email",
+            message: `Select an user name:`,
+          },
+        ]);
+        if (!validateEmail(answer.email)) {
+          console.log(chalk.bold.red("Invalid email"));
+          process.exit();
+        }
+        email = answer.email;
+      }
+
+      // Finding folder name
+      const folderName = val.split("/")[1].replace(".git", "");
+      const tasks = new Listr([]);
+
+      if (opt.remote) {
+        tasks.add({
+          title: "Linking with Remote URL",
+          task: () =>
+            executeExeca({
+              command: "git",
+              args: ["remote", "add", "origin", repo],
+            }),
+        });
+      } else {
+        // Cloaning Repository
+        tasks.add({
+          title: "Cloaning Repo",
+          task: () =>
+            executeExeca({
+              command: "git",
+              args: ["clone", repo],
+            }),
+        });
+
+        // Git config user name
+        tasks.add({
+          title: "Configuring user name",
+          task: () =>
+            executeExeca({
+              command: "git",
+              args: ["config", "user.name", "Rafat Rashid Rahi"], //TODO: Change hard coded name
+              folder: folderName,
+            }),
+        });
+
+        // Git config user email
+        tasks.add({
+          title: "Configuring Email",
+          task: () =>
+            executeExeca({
+              command: "git",
+              args: ["config", "user.email", email],
+              folder: folderName,
+            }),
+        });
+
+        // Adding task for installing dependencies
+        if (opt.dependencies) {
+          tasks.add({
+            title: "Installing Dependencies",
+            task: () => installDepencencies({ folder: folderName }),
+          });
+        }
+
+        // Adding task for opening VSCode
+        tasks.add({
+          title: "Opening VSCode",
+          task: () => executeExeca({ command: "code", args: [folderName] }),
+        });
+      }
+
+      await tasks.run().catch((err) => {
+        console.error(err);
+      });
     }
   } else {
     console.log("Invalid repo name");
