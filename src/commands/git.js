@@ -5,23 +5,27 @@ const inquirer = require("inquirer");
 const chalk = require("chalk");
 const Listr = require("listr");
 const {
-  executeListOfCommands,
   installDepencencies,
-  executeCommand,
   checkIfDirectoryExists,
   executeExeca,
 } = require("../utils/common");
 
+const description = `
+  Github Api
+  action = [repos, search, generate]
+`;
+
 program
   .command("git <action> [val]")
   .option("-a, --all", "all repos")
-  .option("-u, --private", "user repos")
+  .option("-x, --private", "user repos")
   .option("-p, --public", "org repos")
   .option("-r, --remote [name]", "Generate Remote link")
   .option("-c, --clone [name]", "Clone repo")
   .option("-e, --execute", "Execute the command")
   .option("-d, --dependencies", "Install dependencies")
-  .description("Github api")
+  .option("-u", "--user [name]", "User name for git admin")
+  .description(description)
   .action(async (action, val, opt) => {
     const act = action.toLowerCase();
     const v = val?.toLowerCase() || undefined;
@@ -91,7 +95,6 @@ const getGitSearch = async (val, opt) => {
         );
       }
     } else {
-
       if (opt.execute) {
         // if folderName already exists, then stop execution
         const folderName = answers.repo.split("/")[1];
@@ -112,7 +115,7 @@ const getGitSearch = async (val, opt) => {
         });
 
         // Adding task for configuring user name
-        
+
         tasks.add({
           title: "Configuring user name",
           task: () =>
@@ -124,10 +127,12 @@ const getGitSearch = async (val, opt) => {
         });
 
         // Adding task for configuring user email
-        if(usr == "shallx" || usr == "rahi-staff"){
-          const email = usr == "shallx" ? "rafat.rashid247@gmail.com" : "rafatrahi@staffasia.org";
+        if (usr == "shallx" || usr == "rahi-staff") {
+          const email =
+            usr == "shallx"
+              ? "rafat.rashid247@gmail.com"
+              : "rafatrahi@staffasia.org";
 
-          
           tasks.add({
             title: "Configuring Email",
             task: () =>
@@ -138,7 +143,6 @@ const getGitSearch = async (val, opt) => {
               }),
           });
         }
-        
 
         // Adding task for installing dependencies
         if (opt.dependencies) {
@@ -167,3 +171,24 @@ const getGitSearch = async (val, opt) => {
     console.log(repos);
   }
 };
+
+// Generates clone url if only val is provided and default user is shallx
+// Remote url is provided if opt.remote is true
+// change user if opt.user is provided
+const generate = async(action, val, opt) => {
+  if(!val || val == '') {
+    console.log('Please provide a repo name');
+    process.exit();
+  }
+  // check if val contains git@ at the beginning
+  if(typeof val === 'string' && val.startsWith('git@github.com')) {
+    if(opt.remote) {
+      if(opt.user) {
+        const repo = val.split(':')[1];
+      }
+    }
+  } else {
+    console.log('Invalid repo name');
+  }
+
+}

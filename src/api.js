@@ -1,5 +1,6 @@
 const axios = require("axios");
 const path = require("path");
+const fs = require("fs");
 
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const key = process.env.TRELLO_KEY;
@@ -10,7 +11,7 @@ const trelloUrl = "https://api.trello.com/1/";
 const trelloParams = {
   key,
   token,
-}
+};
 
 axios.default.baseURL = "https://api.trello.com/1/";
 axios.default.params = {
@@ -26,10 +27,10 @@ const list = {
 const createCard = async (name) => {
   return new Promise(async (resolve, reject) => {
     axios
-      .post(trelloUrl+"cards", {
+      .post(trelloUrl + "cards", {
         name: name,
         idList: "5fc37294869f4a07606ae4b2",
-        ...trelloParams
+        ...trelloParams,
       })
       .then((result) => {
         return resolve(result.data.id);
@@ -45,7 +46,7 @@ const getCards = async (id) => {
 
   return new Promise((resolve, reject) => {
     axios
-      .get(trelloUrl+"lists/" + listId + "/cards", {params : trelloParams})
+      .get(trelloUrl + "lists/" + listId + "/cards", { params: trelloParams })
       .then((result) => {
         const mapped_result = result.data.map((val, i) => {
           return {
@@ -64,9 +65,9 @@ const getCards = async (id) => {
 const updateCard = async (id, desc) => {
   return new Promise((resolve, reject) => {
     axios
-      .put(trelloUrl+"cards/" + id, {
+      .put(trelloUrl + "cards/" + id, {
         desc,
-        ...trelloParams
+        ...trelloParams,
       })
       .then((result) => {
         resolve("Success!!!");
@@ -80,7 +81,7 @@ const updateCard = async (id, desc) => {
 const removeCard = async (id) => {
   return new Promise((resolve, reject) => {
     axios
-      .delete(trelloUrl+ "cards/" + id, {params: trelloParams})
+      .delete(trelloUrl + "cards/" + id, { params: trelloParams })
       .then((result) => {
         resolve("Task removed successfully!!!");
       })
@@ -93,9 +94,9 @@ const removeCard = async (id) => {
 const moveCard = async (id) => {
   return new Promise((resolve, reject) => {
     axios
-      .put(trelloUrl+ "cards/" + id, {
+      .put(trelloUrl + "cards/" + id, {
         idList: "5fc37294869f4a07606ae4b3",
-        ...trelloParams
+        ...trelloParams,
       })
       .then((result) => {
         resolve("Task completed!!!");
@@ -155,7 +156,49 @@ const searchRepos = async (val, opt) => {
       }
     );
     return result.data.items.map((val, i) => val.full_name);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getTiktokVideoDownloadUrl = async (url) => {
+  try {
+    const result = await axios.get(
+      "https://api.akuari.my.id/downloader/tiktok",
+      {
+        params: {
+          link: url,
+        },
+      }
+    );
+    const link = result.data.respon.video;
+    return link;
     
+  }
+  catch(error){
+    console.log(error)
+  }
+}
+
+const dlVideo = async (url) => {
+  try {
+    const response = await axios.get(url, {
+      responseType: "stream",
+    });
+
+    // const totalSize = response.headers["content-length"];
+    // let downloadedSize = 0;
+
+    const filename = `./video_${Date.now()}.mp4`;
+
+    const writer = fs.createWriteStream(filename);
+
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
   } catch (error) {
     console.log(error);
   }
@@ -170,4 +213,6 @@ module.exports = {
   list,
   getRepos,
   searchRepos,
+  getTiktokVideoDownloadUrl,
+  dlVideo
 };

@@ -25,6 +25,8 @@ require('./src/commands/task');
 
 require('./src/commands/git');
 
+require('./src/commands/download');
+
 if(process.platform === "win32") require('./src/commands/open');
 else if(process.platform === "darwin") require('./src/commands/open_mac');
 
